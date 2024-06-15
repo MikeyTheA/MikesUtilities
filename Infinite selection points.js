@@ -21,6 +21,11 @@ window.update = () => {
             }
             return result;
         };
+
+        window.cleanup = () => {
+            StarterSelectUiHandler.getValueLimit = oldGetValueLimit;
+            StarterSelectUiHandler.tryUpdateValue = oldTryUpdateValue;
+        };
     }
 };
 
