@@ -28,3 +28,5 @@ data.addListener(
     },
     true
 );
+
+print('crazy');
