@@ -3,7 +3,7 @@ const god = (phase) => {
         const pokemon = phase.getPokemon();
         const oldDamage = pokemon.damage;
         pokemon.damage = (damage, ...args) => {
-            if (data.getData('InstantKill', false, true)) {
+            if (data.getData('GodMode', false, true)) {
                 damage = 0;
             }
             oldDamage.call(pokemon, damage, ...args);
