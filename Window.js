@@ -1,5 +1,7 @@
 const requiredVersion = '1.0.2';
 
+const VoucherType = ['REGULAR', 'PLUS', 'PREMIUM', 'GOLDEN'];
+
 addWindow(
     "Mike's utilities",
     () => {
@@ -36,6 +38,28 @@ addWindow(
                 256,
                 ImGui.InputTextFlags.CharsDecimal
             );
+        }
+
+        if (battleScene && battleScene.gameData && battleScene.gameData.voucherCounts && ImGui.CollapsingHeader('Edit vouchers')) {
+            VoucherType.forEach((Voucher, VoucherId) => {
+                ImGui.InputText(
+                    Voucher,
+                    (value = battleScene.gameData.voucherCounts[VoucherId]) => {
+                        battleScene.gameData.voucherCounts[VoucherId] = parseInt(value);
+                        const eggGachaUiHandler = getHandler('EggGachaUiHandler');
+                        if (eggGachaUiHandler && eggGachaUiHandler.updateVoucherCounts) {
+                            eggGachaUiHandler.updateVoucherCounts();
+                        }
+                        return String(value);
+                    },
+                    256,
+                    ImGui.InputTextFlags.CharsDecimal
+                );
+            });
+        }
+
+        if (ImGui.Button('Save Data')) {
+            battleScene.gameData.saveSystem();
         }
     },
     {
