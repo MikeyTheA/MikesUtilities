@@ -6,7 +6,7 @@ const kill = (phase) => {
             if (data.getData('InstantKill', false, true)) {
                 damage = pokemon.hp;
             }
-            oldDamage.call(pokemon, damage, ...args);
+            return oldDamage.call(pokemon, damage, ...args);
         };
     }
 };
