@@ -4,3 +4,5 @@ A collection of utilities, good for debugging and such
 * No friendly damage
 * One hit kill
 * Infinite pokemon selection points
+* Always catch
+* Money editor
