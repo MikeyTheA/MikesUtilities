@@ -1,6 +1,25 @@
 const requiredVersion = '1.0.2';
 
 const VoucherType = ['REGULAR', 'PLUS', 'PREMIUM', 'GOLDEN'];
+const GachaType = ['MOVE', 'LEGENDARY', 'SHINY'];
+const EggTier = ['COMMON', 'GREAT', 'ULTRA', 'MASTER'];
+
+const EGG_SEED = 1073741824;
+
+const updateEggList = (battleScene) => {
+    const eggListUiHandler = getHandler('EggListUiHandler');
+    if (eggListUiHandler && eggListUiHandler.active) {
+        battleScene.gameData.eggs.forEach((egg) => {
+            eggListUiHandler.setEggDetails(egg);
+        });
+
+        const cursor = eggListUiHandler.getCursor();
+        eggListUiHandler.eggListIconContainer.removeAll(true);
+        eggListUiHandler.show();
+        eggListUiHandler.setCursor(cursor);
+        eggListUiHandler.iconAnimHandler.addOrUpdate(eggListUiHandler.eggListIconContainer.getAt(cursor), 2);
+    }
+};
 
 addWindow(
     "Mike's utilities",
@@ -58,7 +77,37 @@ addWindow(
             });
         }
 
-        if (ImGui.Button('Save Data')) {
+        if (battleScene && battleScene.gameData && battleScene.gameData.eggs && ImGui.CollapsingHeader('Edit eggs')) {
+            EggTier.forEach((Tier, TierId) => {
+                if (ImGui.Button(`Set all eggs Tier to ${Tier}`)) {
+                    battleScene.gameData.eggs.forEach((egg) => {
+                        const random_remainder = Math.floor(Math.random() * EGG_SEED);
+                        const new_id = TierId * EGG_SEED + random_remainder;
+                        egg.id = new_id;
+                        egg.tier = TierId;
+                    });
+
+                    updateEggList(battleScene);
+                }
+            });
+            GachaType.forEach((Gacha, GachaId) => {
+                if (ImGui.Button(`Set all eggs GachaType to ${Gacha}`)) {
+                    battleScene.gameData.eggs.forEach((egg) => {
+                        egg.gachaType = GachaId;
+                    });
+
+                    updateEggList(battleScene);
+                }
+            });
+
+            if (ImGui.Button('Set all eggs to hatch next wave')) {
+                battleScene.gameData.eggs.forEach((egg) => {
+                    egg.hatchWaves = 0;
+                });
+            }
+        }
+
+        if (battleScene && battleScene.gameData && battleScene.gameData.saveSystem && ImGui.Button('Save Data')) {
             battleScene.gameData.saveSystem();
         }
     },
