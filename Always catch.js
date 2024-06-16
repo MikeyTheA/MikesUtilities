@@ -3,10 +3,8 @@ hook('AttemptCapturePhase', (phase) => {
         return;
     }
     const pokemon = phase.getPokemon();
-    print('test');
     const oldRandSeedInt = pokemon.randSeedInt;
     pokemon.randSeedInt = () => {
-        print('working');
         return 0;
     };
 
