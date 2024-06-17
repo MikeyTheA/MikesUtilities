@@ -41,6 +41,7 @@ addWindow(
             ImGui.Checkbox('Ignore boss segments', data.getAccess('IgnoreBossSegments', false, true));
         }
         ImGui.Checkbox('Always catch', data.getAccess('AlwaysCatch', false, true));
+        ImGui.Checkbox('Always shiny (encounter)', data.getAccess('AlwaysShinyEncounter', false, true));
         ImGui.Checkbox('Infinite starter pokemon selection points', data.getAccess('InfSelectionPoints', false, true));
 
         if (battleScene && battleScene.money) {

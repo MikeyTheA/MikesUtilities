@@ -9,3 +9,15 @@ hook('EggHatchPhase', (phase) => {
         return oldDoReveal.call(phase, ...args);
     };
 });
+
+const shiny = (phase) => {
+    if (!phase.player) {
+        const pokemon = phase.getPokemon();
+        if (data.getData('AlwaysShinyEncounter', false, true)) {
+            pokemon.shiny = true;
+        }
+    }
+};
+
+hook('PostSummonPhase', shiny);
+hook('SummonPhase', shiny);
