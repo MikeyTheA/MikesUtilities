@@ -8,6 +8,7 @@ hook('EggHatchPhase', (phase) => {
             phase.pokemon.initShinySparkle();
             phase.pokemonSprite.setPipelineData('shiny', phase.pokemon.shiny);
             phase.pokemonSprite.setPipelineData('variant', phase.pokemon.variant);
+            phase.pokemonSprite.setPipelineData('spriteKey', phase.pokemon.getSpriteKey());
         }
 
         return oldDoReveal.call(phase, ...args);
