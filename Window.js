@@ -83,6 +83,7 @@ addWindow(
         }
 
         if (battleScene && battleScene.gameData && battleScene.gameData.eggs && ImGui.CollapsingHeader('Edit eggs')) {
+            ImGui.Checkbox('Always shiny (eggs)', data.getAccess('AlwaysShinyEggs', false, true));
             EggTier.forEach((Tier, TierId) => {
                 if (ImGui.Button(`Set all eggs Tier to ${Tier}`)) {
                     battleScene.gameData.eggs.forEach((egg) => {
