@@ -3,6 +3,7 @@ const requiredVersion = '1.0.2';
 const VoucherType = ['REGULAR', 'PLUS', 'PREMIUM', 'GOLDEN'];
 const GachaType = ['MOVE', 'LEGENDARY', 'SHINY'];
 const EggTier = ['COMMON', 'GREAT', 'ULTRA', 'MASTER'];
+const ShinyVariant = ['Common (Yellow Stars)', 'Rare (Blue Stars)', 'Epic (Red Stars)'];
 
 const EGG_SEED = 1073741824;
 
@@ -41,7 +42,20 @@ addWindow(
             ImGui.Checkbox('Ignore boss segments', data.getAccess('IgnoreBossSegments', false, true));
         }
         ImGui.Checkbox('Always catch', data.getAccess('AlwaysCatch', false, true));
-        ImGui.Checkbox('Always shiny (encounter)', data.getAccess('AlwaysShinyEncounter', false, true));
+        ImGui.Checkbox('Always shiny (encounter) (sometimes works)', data.getAccess('AlwaysShinyEncounter', false, true));
+        if (data.getData('AlwaysShinyEncounter', false, true)) {
+            ImGui.Text('  ');
+            ImGui.SameLine();
+            const currentShiny = data.getData('ShinyVariant', false, true);
+            if (ImGui.BeginCombo('Shiny variant', ShinyVariant[currentShiny])) {
+                ShinyVariant.forEach((shinyVariant, n) => {
+                    const is_selected = currentShiny === n;
+                    if (ImGui.Selectable(shinyVariant, is_selected)) data.setData('ShinyVariant', n, true);
+                    if (is_selected) ImGui.SetItemDefaultFocus();
+                });
+                ImGui.EndCombo();
+            }
+        }
         ImGui.Checkbox('Infinite starter pokemon selection points', data.getAccess('InfSelectionPoints', false, true));
 
         if (battleScene && battleScene.money) {
@@ -85,6 +99,19 @@ addWindow(
 
         if (battleScene && battleScene.gameData && battleScene.gameData.eggs && ImGui.CollapsingHeader('Edit eggs')) {
             ImGui.Checkbox('Always shiny (eggs)', data.getAccess('AlwaysShinyEggs', false, true));
+            if (data.getData('AlwaysShinyEggs', false, true)) {
+                ImGui.Text('  ');
+                ImGui.SameLine();
+                const currentShiny = data.getData('ShinyVariant', false, true);
+                if (ImGui.BeginCombo('Shiny variant##eggs', ShinyVariant[currentShiny])) {
+                    ShinyVariant.forEach((shinyVariant, n) => {
+                        const is_selected = currentShiny === n;
+                        if (ImGui.Selectable(shinyVariant, is_selected)) data.setData('ShinyVariant', n, true);
+                        if (is_selected) ImGui.SetItemDefaultFocus();
+                    });
+                    ImGui.EndCombo();
+                }
+            }
             EggTier.forEach((Tier, TierId) => {
                 if (ImGui.Button(`Set all eggs Tier to ${Tier}`)) {
                     battleScene.gameData.eggs.forEach((egg) => {
