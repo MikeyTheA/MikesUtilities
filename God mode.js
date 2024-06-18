@@ -6,7 +6,6 @@ const god = (phase) => {
             if (data.getData('GodMode', false, true)) {
                 damage = 0;
             }
-            print(damage);
             return oldDamage.call(pokemon, damage, ...args);
         };
     }
