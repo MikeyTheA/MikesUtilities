@@ -24,10 +24,18 @@ hook('CommandPhase', (phase) => {
     const oldHandleCommand = phase.handleCommand;
 
     phase.handleCommand = (command, cursor, ...args) => {
+        const pokemon = getBattleScene()
+            .getEnemyField()
+            .find((p) => p.isActive(true));
+        let oldIsBoss = pokemon.isBoss;
         if (command === 1 && data.getData('AlwaysCatch', false, true)) {
-            cursor = 4;
+            pokemon.isBoss = () => {
+                return false;
+            };
         }
 
-        return oldHandleCommand.call(phase, command, cursor, ...args);
+        const result = oldHandleCommand.call(phase, command, cursor, ...args);
+        pokemon.isBoss = oldIsBoss;
+        return result;
     };
 });
