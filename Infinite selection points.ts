@@ -1,7 +1,14 @@
-window.update = () => {
-    const StarterSelectUiHandler = getHandler('StarterSelectUiHandler');
+(<any>window).update = () => {
+    const battleScene = getBattleScene()
+
+    if (battleScene === undefined || battleScene.ui === undefined) {
+        return
+    }
+
+    const StarterSelectUiHandler = battleScene.ui.handlers.find(handler => handler.constructor.name === "StarterSelectUiHandler") as undefined | PokeRogue.ui.StarterSelectUiHandler;
     if (StarterSelectUiHandler) {
-        window.update = undefined;
+
+        (window as any).update = undefined;
 
         const oldGetValueLimit = StarterSelectUiHandler.getValueLimit;
         const oldTryUpdateValue = StarterSelectUiHandler.tryUpdateValue;
@@ -14,7 +21,7 @@ window.update = () => {
             }
         };
 
-        StarterSelectUiHandler.tryUpdateValue = (...args) => {
+        StarterSelectUiHandler.tryUpdateValue = (...args: any) => {
             const result = oldTryUpdateValue.call(StarterSelectUiHandler, ...args);
             if (data.getData('InfSelectionPoints', false, true)) {
                 StarterSelectUiHandler.valueLimitLabel.setText(StarterSelectUiHandler.value);
@@ -22,7 +29,7 @@ window.update = () => {
             return result;
         };
 
-        window.cleanup = () => {
+        (window as any).cleanup = () => {
             StarterSelectUiHandler.getValueLimit = oldGetValueLimit;
             StarterSelectUiHandler.tryUpdateValue = oldTryUpdateValue;
         };
@@ -33,7 +40,7 @@ data.addListener(
     'InfSelectionPoints',
     false,
     () => {
-        const StarterSelectUiHandler = getHandler('StarterSelectUiHandler');
+        const StarterSelectUiHandler = getBattleScene().ui.handlers.find(handler => handler.constructor.name === "StarterSelectUiHandler") as undefined | PokeRogue.ui.StarterSelectUiHandler;
         if (StarterSelectUiHandler) {
             StarterSelectUiHandler.tryUpdateValue();
         }

@@ -1,4 +1,4 @@
-hook('AttemptCapturePhase', (phase) => {
+hook('AttemptCapturePhase', (phase: PokeRogue.AttemptCapturePhase) => {
     if (!data.getData('AlwaysCatch', false, true)) {
         return;
     }
@@ -20,7 +20,7 @@ hook('AttemptCapturePhase', (phase) => {
     };
 });
 
-hook('CommandPhase', (phase) => {
+hook('CommandPhase', (phase: PokeRogue.CommandPhase) => {
     const oldHandleCommand = phase.handleCommand;
 
     phase.handleCommand = (command, cursor, ...args) => {

@@ -1,4 +1,4 @@
-hook('EggHatchPhase', (phase) => {
+/*hook('EggHatchPhase', (phase) => {
     const oldDoReveal = phase.doReveal;
 
     phase.doReveal = (...args) => {
@@ -30,3 +30,4 @@ const shiny = (phase) => {
 
 hook('PostSummonPhase', shiny);
 hook('SummonPhase', shiny);
+*/ 

@@ -1,37 +1,25 @@
-const requiredVersion = '1.0.2';
-
-const VoucherType = ['REGULAR', 'PLUS', 'PREMIUM', 'GOLDEN'];
-const GachaType = ['MOVE', 'LEGENDARY', 'SHINY'];
-const EggTier = ['COMMON', 'GREAT', 'ULTRA', 'MASTER'];
 const ShinyVariant = ['Common (Yellow Stars)', 'Rare (Blue Stars)', 'Epic (Red Stars)'];
 
-const EGG_SEED = 1073741824;
+const EGG_SEED = PokeRogue.data.EGG_SEED;
 
-const updateEggList = (battleScene) => {
-    const eggListUiHandler = getHandler('EggListUiHandler');
-    if (eggListUiHandler && eggListUiHandler.active) {
-        battleScene.gameData.eggs.forEach((egg) => {
-            eggListUiHandler.setEggDetails(egg);
+const updateEggList = (scene: PokeRogue.BattleScene) => {
+    const handler = scene.ui.getHandler();
+    if (handler instanceof PokeRogue.ui.EggListUiHandler) {
+        scene.gameData.eggs.forEach((egg: any) => {
+            handler.setEggDetails(egg);
         });
 
-        const cursor = eggListUiHandler.getCursor();
-        eggListUiHandler.eggListIconContainer.removeAll(true);
-        eggListUiHandler.show();
-        eggListUiHandler.setCursor(cursor);
-        eggListUiHandler.iconAnimHandler.addOrUpdate(eggListUiHandler.eggListIconContainer.getAt(cursor), 2);
+        const cursor = handler.getCursor();
+        handler.eggListIconContainer.removeAll(true);
+        handler.show([]);
+        handler.setCursor(cursor);
+        handler.iconAnimHandler.addOrUpdate(handler.eggListIconContainer.getAt(cursor), 2);
     }
 };
 
 addWindow(
     "Mike's utilities",
     () => {
-        if (compareVersions(currentVersion, requiredVersion) < 0) {
-            ImGui.Text('Outdated PokeRogueModLoader!');
-            ImGui.Text(`Update to ${requiredVersion}`);
-            ImGui.Text(`You are using ${currentVersion}`);
-            return;
-        }
-
         const battleScene = getBattleScene();
         ImGui.Checkbox('Free rerolls', data.getAccess('FreeRerolls', false, true));
         ImGui.Checkbox('No friendly damage', data.getAccess('GodMode', false, true));
@@ -42,11 +30,12 @@ addWindow(
             ImGui.Checkbox('Ignore boss segments', data.getAccess('IgnoreBossSegments', false, true));
         }
         ImGui.Checkbox('Always catch', data.getAccess('AlwaysCatch', false, true));
+        /*
         ImGui.Checkbox('Always shiny (encounter) (sometimes works)', data.getAccess('AlwaysShinyEncounter', false, true));
         if (data.getData('AlwaysShinyEncounter', false, true)) {
             ImGui.Text('  ');
             ImGui.SameLine();
-            const currentShiny = data.getData('ShinyVariant', false, true);
+            const currentShiny = data.getData('ShinyVariant', 0, true);
             if (ImGui.BeginCombo('Shiny variant', ShinyVariant[currentShiny])) {
                 ShinyVariant.forEach((shinyVariant, n) => {
                     const is_selected = currentShiny === n;
@@ -55,10 +44,10 @@ addWindow(
                 });
                 ImGui.EndCombo();
             }
-        }
+        }*/
         ImGui.Checkbox('Infinite starter pokemon selection points', data.getAccess('InfSelectionPoints', false, true));
 
-        if (battleScene && battleScene.money) {
+        if (battleScene && battleScene.money !== undefined) {
             ImGui.InputText(
                 'Edit money',
                 (value = battleScene.money) => {
@@ -67,12 +56,12 @@ addWindow(
                         modified = true;
                     }
 
-                    battleScene.money = parseInt(value) || battleScene.money;
+                    battleScene.money = parseInt(value) || 0;
                     if (modified) {
                         battleScene.updateMoneyText();
                     }
 
-                    return String(value);
+                    return String(value || 0);
                 },
                 256,
                 ImGui.InputTextFlags.CharsDecimal
@@ -80,16 +69,19 @@ addWindow(
         }
 
         if (battleScene && battleScene.gameData && battleScene.gameData.voucherCounts && ImGui.CollapsingHeader('Edit vouchers')) {
+            const VoucherType = Object.keys(PokeRogue.system.VoucherType).filter((v) => isNaN(Number(v)));
             VoucherType.forEach((Voucher, VoucherId) => {
                 ImGui.InputText(
                     Voucher,
                     (value = battleScene.gameData.voucherCounts[VoucherId]) => {
-                        battleScene.gameData.voucherCounts[VoucherId] = parseInt(value);
-                        const eggGachaUiHandler = getHandler('EggGachaUiHandler');
-                        if (eggGachaUiHandler && eggGachaUiHandler.updateVoucherCounts) {
-                            eggGachaUiHandler.updateVoucherCounts();
+                        battleScene.gameData.voucherCounts[VoucherId] = parseInt(value) || 0;
+                        const handler = battleScene.ui.getHandler();
+                        if (handler instanceof PokeRogue.ui.EggGachaUiHandler) {
+                            if (handler && handler.updateVoucherCounts) {
+                                handler.updateVoucherCounts();
+                            }
                         }
-                        return String(value);
+                        return String(value || 0);
                     },
                     256,
                     ImGui.InputTextFlags.CharsDecimal
@@ -98,11 +90,11 @@ addWindow(
         }
 
         if (battleScene && battleScene.gameData && battleScene.gameData.eggs && ImGui.CollapsingHeader('Edit eggs')) {
-            ImGui.Checkbox('Always shiny (eggs)', data.getAccess('AlwaysShinyEggs', false, true));
+            /*ImGui.Checkbox('Always shiny (eggs)', data.getAccess('AlwaysShinyEggs', false, true));
             if (data.getData('AlwaysShinyEggs', false, true)) {
                 ImGui.Text('  ');
                 ImGui.SameLine();
-                const currentShiny = data.getData('ShinyVariant', false, true);
+                const currentShiny = data.getData('ShinyVariant', 0, true);
                 if (ImGui.BeginCombo('Shiny variant##eggs', ShinyVariant[currentShiny])) {
                     ShinyVariant.forEach((shinyVariant, n) => {
                         const is_selected = currentShiny === n;
@@ -111,23 +103,25 @@ addWindow(
                     });
                     ImGui.EndCombo();
                 }
-            }
+            }*/
+            const EggTier = Object.keys(PokeRogue.enums.EggTier).filter((v) => isNaN(Number(v)));
             EggTier.forEach((Tier, TierId) => {
                 if (ImGui.Button(`Set all eggs Tier to ${Tier}`)) {
                     battleScene.gameData.eggs.forEach((egg) => {
                         const random_remainder = Math.floor(Math.random() * EGG_SEED);
                         const new_id = TierId * EGG_SEED + random_remainder;
-                        egg.id = new_id;
-                        egg.tier = TierId;
+                        egg._id = new_id;
+                        egg._tier = TierId;
                     });
 
                     updateEggList(battleScene);
                 }
             });
-            GachaType.forEach((Gacha, GachaId) => {
+            const EggSourceType = Object.keys(PokeRogue.enums.EggSourceType).filter((v) => isNaN(Number(v)));
+            EggSourceType.forEach((Gacha, GachaId) => {
                 if (ImGui.Button(`Set all eggs GachaType to ${Gacha}`)) {
-                    battleScene.gameData.eggs.forEach((egg) => {
-                        egg.gachaType = GachaId;
+                    battleScene.gameData.eggs.forEach((egg: PokeRogue.data.Egg) => {
+                        egg._sourceType = GachaId;
                     });
 
                     updateEggList(battleScene);
@@ -135,7 +129,7 @@ addWindow(
             });
 
             if (ImGui.Button('Set all eggs to hatch next wave')) {
-                battleScene.gameData.eggs.forEach((egg) => {
+                battleScene.gameData.eggs.forEach((egg: any) => {
                     egg.hatchWaves = 0;
                 });
             }

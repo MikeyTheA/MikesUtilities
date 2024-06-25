@@ -1,8 +1,8 @@
-const kill = (phase) => {
+const kill = (phase: PokeRogue.PostSummonPhase) => {
     if (!phase.player) {
         const pokemon = phase.getPokemon();
         const oldDamage = pokemon.damage;
-        pokemon.damage = (damage, ignoreSegments, ...args) => {
+        pokemon.damage = (damage: any, ignoreSegments: boolean, ...args: any) => {
             if (data.getData('InstantKill', false, true)) {
                 damage = pokemon.hp;
             }

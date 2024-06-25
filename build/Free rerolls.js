@@ -1,9 +1,9 @@
-let currentPhase = undefined;
-let lastArgs = [];
-
+var currentPhase = undefined;
+var lastArgs = [];
 function SelectModifierPhaseHook(phase) {
-    const oldGetRerollCost = phase.getRerollCost;
-    phase.getRerollCost = (t, i) => {
+    var oldGetRerollCost = phase.getRerollCost;
+    phase.getRerollCost = function (t, i) {
+        log(data.getData('FreeRerolls', false, true));
         lastArgs[0] = t;
         lastArgs[1] = i;
         if (data.getData('FreeRerolls', false, true)) {
@@ -13,18 +13,14 @@ function SelectModifierPhaseHook(phase) {
     };
     currentPhase = phase;
 }
-
 hook('SelectModifierPhase', SelectModifierPhaseHook);
-
-data.addListener(
-    'FreeRerolls',
-    false,
-    (v) => {
-        const handler = getHandler('ModifierSelectUiHandler');
+data.addListener('FreeRerolls', false, function () {
+    var battleScene = getBattleScene();
+    if (battleScene) {
+        var handler = getBattleScene().ui.handlers.find(function (handler) { return handler.constructor.name === "ModifierSelectUiHandler"; });
         if (handler && currentPhase && currentPhase.getRerollCost) {
             handler.setRerollCost(currentPhase.getRerollCost(lastArgs[0], lastArgs[1]));
             handler.updateRerollCostText();
         }
-    },
-    true
-);
+    }
+}, true);
