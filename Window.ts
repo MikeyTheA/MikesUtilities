@@ -224,21 +224,14 @@ addWindow(
             ImGui.Checkbox('Ignore boss segments', data.getAccess('IgnoreBossSegments', false, true));
         }
         ImGui.Checkbox('Always catch', data.getAccess('AlwaysCatch', false, true));
-        /*
-        ImGui.Checkbox('Always shiny (encounter) (sometimes works)', data.getAccess('AlwaysShinyEncounter', false, true));
-        if (data.getData('AlwaysShinyEncounter', false, true)) {
+
+        ImGui.Checkbox('Always shiny (encounter)', data.getAccess('AlwaysShinyEncounter', false, true));
+        /*if (data.getData('AlwaysShinyEncounter', false, true)) {
             ImGui.Text('  ');
             ImGui.SameLine();
-            const currentShiny = data.getData('ShinyVariant', 0, true);
-            if (ImGui.BeginCombo('Shiny variant', ShinyVariant[currentShiny])) {
-                ShinyVariant.forEach((shinyVariant, n) => {
-                    const is_selected = currentShiny === n;
-                    if (ImGui.Selectable(shinyVariant, is_selected)) data.setData('ShinyVariant', n, true);
-                    if (is_selected) ImGui.SetItemDefaultFocus();
-                });
-                ImGui.EndCombo();
-            }
+            ImGui.Combo("Shiny variant", data.getAccess("ShinyVariant", 0, true), ShinyVariant, ImGui.ARRAYSIZE(ShinyVariant));
         }*/
+
         ImGui.Checkbox('Infinite starter pokemon selection points', data.getAccess('InfSelectionPoints', false, true));
 
         if (battleScene && battleScene.money !== undefined) {

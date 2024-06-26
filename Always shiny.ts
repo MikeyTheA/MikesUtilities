@@ -1,33 +1,29 @@
-/*hook('EggHatchPhase', (phase) => {
-    const oldDoReveal = phase.doReveal;
+let oldAddEnemyPokemon: any;
 
-    phase.doReveal = (...args) => {
-        if (data.getData('AlwaysShinyEggs', false, true)) {
-            phase.pokemon.shiny = true;
-            phase.pokemon.variant = data.getData('ShinyVariant', false, true);
-            phase.pokemon.initShinySparkle();
-            phase.pokemonSprite.setPipelineData('shiny', phase.pokemon.shiny);
-            phase.pokemonSprite.setPipelineData('variant', phase.pokemon.variant);
-            phase.pokemonSprite.setPipelineData('spriteKey', phase.pokemon.getSpriteKey());
-        }
-
-        return oldDoReveal.call(phase, ...args);
-    };
-});
-
-const shiny = (phase) => {
-    if (!phase.player) {
-        const pokemon = phase.getPokemon();
-        if (data.getData('AlwaysShinyEncounter', false, true)) {
-            pokemon.shiny = true;
-            pokemon.variant = data.getData('ShinyVariant', false, true);
-            pokemon.initShinySparkle();
-            pokemon.sparkle();
-            pokemon.updateFusionPalette();
-        }
+(<any>window).update = () => {
+    const battleScene = getBattleScene()
+    if (battleScene === undefined) {
+        return
     }
-};
 
-hook('PostSummonPhase', shiny);
-hook('SummonPhase', shiny);
-*/
+    (<any>window).update = undefined
+    oldAddEnemyPokemon = battleScene.addEnemyPokemon
+
+    battleScene.addEnemyPokemon = (species: PokeRogue.data.PokemonSpecies, level: number, trainerSlot: PokeRogue.data.TrainerSlot, boss: boolean = false, dataSource?: PokeRogue.system.PokemonData, postProcess?: (enemyPokemon: PokeRogue.field.EnemyPokemon) => void): PokeRogue.field.EnemyPokemon => {
+        const pokemon: PokeRogue.field.EnemyPokemon = oldAddEnemyPokemon.call(battleScene, species, level, trainerSlot, boss, dataSource, postProcess)
+        if (data.getData("AlwaysShinyEncounter", false, true)) {
+            pokemon.shiny = true
+            //pokemon.variant = data.getData('ShinyVariant', 0, true);
+        }
+        return pokemon
+    }
+}
+
+(<any>window).cleanup = () => {
+    const battleScene = getBattleScene()
+    if (battleScene === undefined) {
+        return
+    }
+
+    battleScene.addEnemyPokemon = oldAddEnemyPokemon ?? battleScene.addEnemyPokemon
+}
