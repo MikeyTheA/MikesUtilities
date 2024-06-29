@@ -47,3 +47,10 @@ hook('CommandPhase', (phase: PokeRogue.CommandPhase) => {
         return result;
     };
 });
+
+// Bug with modifier thing after catching a boss or something
+hook('AddEnemyBuffModifierPhase', (phase: PokeRogue.AddEnemyBuffModifierPhase) => {
+    if (getBattleScene().getEnemyParty()[0].scene === undefined) {
+        phase.start = () => { getBattleScene().shiftPhase() }
+    }
+})
