@@ -36,13 +36,21 @@ hook('CommandPhase', function (phase) {
             .getEnemyField()
             .find(function (p) { return p.isActive(true); });
         var oldIsBoss = pokemon.isBoss;
+        var biomeIsEnd = false;
         if (command === 1 && data.getData('AlwaysCatch', false, true)) {
             pokemon.isBoss = function () {
                 return false;
             };
+            if (getBattleScene().arena.biomeType === PokeRogue.enums.Biome.END && data.getData('CatchInEnd', false, true)) {
+                getBattleScene().arena.biomeType = PokeRogue.enums.Biome.PLAINS;
+                biomeIsEnd = true;
+            }
         }
         var result = oldHandleCommand.call.apply(oldHandleCommand, __spreadArray([phase, command, cursor], args, false));
         pokemon.isBoss = oldIsBoss;
+        if (biomeIsEnd) {
+            getBattleScene().arena.biomeType = PokeRogue.enums.Biome.END;
+        }
         return result;
     };
 });

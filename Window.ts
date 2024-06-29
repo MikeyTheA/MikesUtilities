@@ -215,6 +215,7 @@ addWindow(
     "Mike's utilities",
     () => {
         const battleScene = getBattleScene();
+
         ImGui.Checkbox('Free rerolls', data.getAccess('FreeRerolls', false, true));
         ImGui.Checkbox('No friendly damage', data.getAccess('GodMode', false, true));
         ImGui.Checkbox('One hit kill', data.getAccess('InstantKill', false, true));
@@ -223,7 +224,13 @@ addWindow(
             ImGui.SameLine();
             ImGui.Checkbox('Ignore boss segments', data.getAccess('IgnoreBossSegments', false, true));
         }
+
         ImGui.Checkbox('Always catch', data.getAccess('AlwaysCatch', false, true));
+        if (data.getData('AlwaysCatch', false, true)) {
+            ImGui.Text('  ');
+            ImGui.SameLine();
+            ImGui.Checkbox('Catch in END', data.getAccess('CatchInEnd', false, true));
+        }
 
         ImGui.Checkbox('Always shiny (encounter)', data.getAccess('AlwaysShinyEncounter', false, true));
         /*if (data.getData('AlwaysShinyEncounter', false, true)) {

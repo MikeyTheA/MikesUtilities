@@ -192,6 +192,11 @@ addWindow("Mike's utilities", function () {
         ImGui.Checkbox('Ignore boss segments', data.getAccess('IgnoreBossSegments', false, true));
     }
     ImGui.Checkbox('Always catch', data.getAccess('AlwaysCatch', false, true));
+    if (data.getData('AlwaysCatch', false, true)) {
+        ImGui.Text('  ');
+        ImGui.SameLine();
+        ImGui.Checkbox('Catch in END', data.getAccess('CatchInEnd', false, true));
+    }
     ImGui.Checkbox('Always shiny (encounter)', data.getAccess('AlwaysShinyEncounter', false, true));
     /*if (data.getData('AlwaysShinyEncounter', false, true)) {
         ImGui.Text('  ');

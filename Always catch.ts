@@ -28,14 +28,22 @@ hook('CommandPhase', (phase: PokeRogue.CommandPhase) => {
             .getEnemyField()
             .find((p) => p.isActive(true));
         let oldIsBoss = pokemon.isBoss;
+        let biomeIsEnd = false
         if (command === 1 && data.getData('AlwaysCatch', false, true)) {
             pokemon.isBoss = () => {
                 return false;
             };
+            if (getBattleScene().arena.biomeType === PokeRogue.enums.Biome.END && data.getData('CatchInEnd', false, true)) {
+                getBattleScene().arena.biomeType = PokeRogue.enums.Biome.PLAINS
+                biomeIsEnd = true
+            }
         }
 
         const result = oldHandleCommand.call(phase, command, cursor, ...args);
         pokemon.isBoss = oldIsBoss;
+        if (biomeIsEnd) {
+            getBattleScene().arena.biomeType = PokeRogue.enums.Biome.END
+        }
         return result;
     };
 });
